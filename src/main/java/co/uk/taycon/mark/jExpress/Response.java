@@ -29,7 +29,7 @@ public class Response {
     private void finaliseSend(String message) {
         out.println("Date: " +  LocalDateTime.now().toString());
         out.println("Server: jExpress 0.0.1");
-        out.println("Content-Type: text/html\n");
+        out.println("Content-Type: text/html");
         out.println(message);
         out.close();
     }
