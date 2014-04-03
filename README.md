@@ -14,3 +14,4 @@ The App.java class in the test file. This is an example usage of the java librar
 The AppInvoker.java class. This will run app.js from within a java library<br />
 The app.js file using jjs. This will run the app.js file using nashorn
 
+Note, the code for this is currently on the integration branch, I will pull this readme file down tonight and get that onto the same branch.
