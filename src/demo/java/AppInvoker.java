@@ -9,7 +9,7 @@ public class AppInvoker {
         ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
         ScriptEngine engine = scriptEngineManager.getEngineByName("nashorn");
 
-        engine.eval("load('src/test/java/app.js')");
+        engine.eval("load('src/demo/javascript/app.js')");
     }
 
 }
