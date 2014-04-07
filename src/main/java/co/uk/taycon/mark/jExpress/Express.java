@@ -19,13 +19,13 @@ public class Express {
 
     private ExecutorService tasks = Executors.newFixedThreadPool(POOL_SIZE);
 
-    private boolean listening;
+    private ServerSocket listener;
 
     public void listen(int port) {
-        listening = true;
         tasks.execute(() -> {
-            try (ServerSocket listener = new ServerSocket(port)) {
-                while (listening) {
+            try  {
+                listener = new ServerSocket(port);
+                while (listener.isBound()) {
                     Socket socket = listener.accept();
                     tasks.execute(() -> {
                         try {
@@ -50,25 +50,32 @@ public class Express {
                                     res.send(404);
                                 }
                             }
-
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            System.out.println("Error communicating with client:" + e.getMessage());
                         }
                     });
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("Sever shut down");
             }
         });
     }
 
     public void stop() {
-        listening = false;
-        tasks.shutdown();
+        try {
+            listener.close();
+        } catch (IOException e) {
+            System.out.println("Unable to shut down server: " + e.getMessage());
+        }
     }
 
-    public synchronized void get(String path, BiConsumer<Request, Response> callback) {
+    public void get(String path, BiConsumer<Request, Response> callback) {
         endpointMap.put(new Route("GET", path), callback);
+    }
+
+    public void staticResource(String urlPath, String filePath) {
+        Route route = new Route("GET", urlPath);
+        endpointMap.put(route, StaticRequest.getStatic(filePath));
     }
 
 }
