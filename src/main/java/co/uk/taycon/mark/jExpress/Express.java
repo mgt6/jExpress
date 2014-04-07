@@ -1,5 +1,10 @@
 package co.uk.taycon.mark.jExpress;
 
+import co.uk.taycon.mark.jExpress.request.Request;
+import co.uk.taycon.mark.jExpress.request.StaticRequest;
+import co.uk.taycon.mark.jExpress.response.Response;
+import co.uk.taycon.mark.jExpress.route.Route;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;

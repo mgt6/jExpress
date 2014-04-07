@@ -1,4 +1,7 @@
-package co.uk.taycon.mark.jExpress;
+package co.uk.taycon.mark.jExpress.request;
+
+import co.uk.taycon.mark.jExpress.request.Request;
+import co.uk.taycon.mark.jExpress.response.Response;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

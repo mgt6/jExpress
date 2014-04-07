@@ -1,4 +1,4 @@
-package co.uk.taycon.mark.jExpress;
+package co.uk.taycon.mark.jExpress.request;
 
 import java.util.Collections;
 import java.util.HashMap;
