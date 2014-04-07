@@ -20,6 +20,8 @@ public class App {
                     "}")
         );
 
+        app.staticResource("/", "/Users/marktaylor/Development/java/jExpress/src/demo/resources/html/index.html");
+
         app.listen(9999);
 
         app.get("/test2", (req, res) ->
