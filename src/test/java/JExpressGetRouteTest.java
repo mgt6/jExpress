@@ -1,46 +1,24 @@
-import co.uk.taycon.mark.jExpress.Express;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.junit.*;
+import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class JExpressUnitTest {
-
-    private static Express express = new Express();
-
-    private static final int TEST_PORT = 9998;
-
-    private static final String TEST_HOST = "localhost";
-
-    private static final String TEST_PATH = "/test";
-
-    private HttpGet getTestPath = new HttpGet("http://" + TEST_HOST + ":" + TEST_PORT + TEST_PATH);
-
-    private DefaultHttpClient client = new DefaultHttpClient();
-
-    @AfterClass
-    public static void tearDown() throws Exception {
-        express.stop();
-    }
-
-    @BeforeClass
-    public static void setUp() throws Exception {
-        express.listen(TEST_PORT);
-    }
+public class JExpressGetRouteTest extends AbstractJExpressTest {
 
     @Test
     public void testGetSendMessage() throws IOException {
 
         String testMessage = "this is a test message";
 
-        express.get("/test", (req, res) ->{
+        express.get(TEST_PATH, (req, res) ->{
 
             assertThat(req.getRequestHeaderMap().containsKey("User-Agent"), is(true));
             assertThat(req.getRequestHeaderMap().get("User-Agent"), containsString("Apache-HttpClient"));
@@ -72,7 +50,7 @@ public class JExpressUnitTest {
 
         int errorCode = 403;
 
-        express.get("/test", (req, res) ->{
+        express.get(TEST_PATH, (req, res) ->{
 
             assertThat(req.getRequestHeaderMap().containsKey("User-Agent"), is(true));
             assertThat(req.getRequestHeaderMap().get("User-Agent"), containsString("Apache-HttpClient"));
@@ -98,7 +76,7 @@ public class JExpressUnitTest {
 
         String testMessage = "naw!";
 
-        express.get("/test", (req, res) ->{
+        express.get(TEST_PATH, (req, res) ->{
 
             assertThat(req.getRequestHeaderMap().containsKey("User-Agent"), is(true));
             assertThat(req.getRequestHeaderMap().get("User-Agent"), containsString("Apache-HttpClient"));
@@ -123,6 +101,33 @@ public class JExpressUnitTest {
         assertThat(response.getStatusLine().toString(), is("HTTP/1.1 " + errorCode + " "));
 
         client.getConnectionManager().shutdown();
+
+    }
+
+    @Test
+    public void testStaticRoute() throws IOException {
+
+        String resourcePath = System.getProperty("user.dir") + "/src/test/resources/html/index.html";
+
+        express.staticResource(TEST_PATH, resourcePath);
+
+        HttpResponse response = client.execute(getTestPath);
+
+        BufferedReader br = new BufferedReader(
+                new InputStreamReader((response.getEntity().getContent())));
+
+        List<String> lines = Files.readAllLines(Paths.get(resourcePath));
+
+        String output;
+        while ((output = br.readLine()) != null) {
+            assertThat(output, is(lines.remove(0)));
+        }
+
+        assertThat(response.getAllHeaders().length, not(0));
+        assertThat(response.getStatusLine().toString(), is("HTTP/1.1 200 "));
+
+        client.getConnectionManager().shutdown();
+
 
     }
 }
